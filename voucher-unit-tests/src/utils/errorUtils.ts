@@ -4,7 +4,7 @@ type AppErrorTypes =
   | "unauthorized"
   | "wrong_schema"
   | "bad_request";
-  
+
 export interface AppError {
   type: AppErrorTypes;
   message: string;

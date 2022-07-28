@@ -2,7 +2,7 @@ import { Voucher } from "@prisma/client";
 import voucherRepository from "../repositories/voucherRepository.js";
 import { conflictError } from "../utils/errorUtils.js";
 
-const MIN_VALUE_FOR_DISCOUNT = 100;
+export const MIN_VALUE_FOR_DISCOUNT = 100;
 
 export type VoucherCreateData = Omit<Voucher, "id">;
 export interface VoucherApplyData {
@@ -12,6 +12,7 @@ export interface VoucherApplyData {
 
 async function createVoucher(code: string, discount: number) {
   const voucher = await voucherRepository.getVoucherByCode(code);
+  console.log({ voucher });
   if (voucher) {
     throw conflictError("Voucher already exist.");
   }
@@ -35,8 +36,8 @@ async function applyVoucher(code: string, amount: number) {
     amount,
     discount: voucher.discount,
     finalAmount,
-    applied: finalAmount !== amount
-  }
+    applied: finalAmount !== amount,
+  };
 }
 
 async function changeVoucherToUsed(code: string) {
@@ -48,10 +49,10 @@ function isAmountValidForDiscount(amount: number) {
 }
 
 function applyDiscount(value: number, discount: number) {
-  return value - (value * (discount / 100));
+  return value - value * (discount / 100);
 }
 
 export default {
   createVoucher,
-  applyVoucher
-}
+  applyVoucher,
+};
