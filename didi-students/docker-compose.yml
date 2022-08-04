@@ -1,0 +1,29 @@
+version: "3"
+services:
+  db:
+    image: postgres:13
+    container_name: db
+    restart: always
+    ports:
+      - 2345:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    env_file:
+      - .env.docker
+    healthcheck:
+      test: pg_isready -U postgres
+
+  node_app:
+    container_name: didi_node_app
+    build: .
+    restart: on-failure
+    ports:
+      - 5000:5000
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+
+volumes:
+  postgres:
