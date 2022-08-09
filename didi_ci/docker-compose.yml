@@ -1,0 +1,29 @@
+version: "3"
+services:
+  db_dev:
+    container_name: db_dev
+    image: postgres
+    restart: always
+    ports:
+      - 2345:5432
+    volumes:
+      - didi_students_dev:/var/lib/postgresql/data
+    env_file: .env.dev
+    healthcheck:
+      test: pg_isready -U postgres
+
+  node_app:
+    container_name: node_app
+    build: .
+    ports:
+      - 5000:5000
+    depends_on:
+      db_dev:
+        condition: service_healthy
+
+    volumes:
+      - .:/usr/src
+    env_file: .env.dev
+
+volumes:
+  didi_students_dev:
